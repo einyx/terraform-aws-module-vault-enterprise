@@ -5,7 +5,7 @@ This repo contains a Module for how to deploy a [Vault](https://www.vaultproject
 secrets. By default, this Module uses [Consul](https://www.consul.io) as a [storage 
 backend](https://www.vaultproject.io/docs/configuration/storage/index.html). 
 
-![Vault architecture](https://github.com/hashicorp/terraform-aws-vault/blob/master/_docs/architecture.png?raw=true)
+![Vault architecture](_docs/architecture.png)
 
 ## What's a Module?
 
