@@ -1,7 +1,9 @@
+/* This will get access to the Account ID */
 data "aws_caller_identity" "current" {}
 
 data "aws_elb_service_account" "elb_sa" {}
 
+/* The userdata for the instance in the asg */
 data "template_file" "userdata" {
   template = "${ file( "${path.module}/files/userdata.sh" ) }"
 
@@ -23,7 +25,8 @@ data "template_file" "userdata" {
 }
 
 
-# This block converts a standard map of tags to a list of maps of tags for ASGs
+/* This block converts a standard map of tags to a list of maps of tags for ASGs
+*/
 data "null_data_source" "asg_tags" {
   count = "${ length( keys( var.tags ) ) }"
 

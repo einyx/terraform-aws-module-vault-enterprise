@@ -29,13 +29,13 @@ resource "aws_security_group_rule" "alb_in_443" {
   cidr_blocks = ["${ var.alb_allowed_ingress_cidrs }"]
 }
 
-resource "aws_security_group_rule" "alb_out_8200" {
+resource "aws_security_group_rule" "alb_out_80" {
   type              = "egress"
   security_group_id = "${ aws_security_group.alb.id }"
 
   protocol                 = "tcp"
-  from_port                = 8200
-  to_port                  = 8200
+  from_port                = 80
+  to_port                  = 80
   source_security_group_id = "${ aws_security_group.ec2.id }"
 }
 
@@ -50,6 +50,16 @@ resource "aws_security_group" "ec2" {
     map("Name", "${ var.name_prefix }-ec2"),
     map("description", "Allow traffic from alb->ec2 and ec2->ec2"),
     var.tags ) }"
+}
+
+resource "aws_security_group_rule" "ec2_in_80" {
+  type              = "ingress"
+  security_group_id = "${ aws_security_group.ec2.id }"
+
+  protocol                 = "tcp"
+  from_port                = 80
+  to_port                  = 80
+  source_security_group_id = "${ aws_security_group.alb.id }"
 }
 
 resource "aws_security_group_rule" "ec2_in_8200" {

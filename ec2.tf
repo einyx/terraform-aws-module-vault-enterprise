@@ -62,12 +62,11 @@ resource "aws_autoscaling_group" "asg" {
   max_size         = "${ var.asg_max_size }"
   desired_capacity = "${ var.asg_desired_capacity }"
 
-  # Don't use ELB as the health check because we do not want
-  # AWS to start cycling instances when Vault is unhealthy,
-  # since our health check will only have one healthy at a time
+  /* Don't use ELB as the health check because we do not want
+  AWS to start cycling instances when Vault is unhealthy */
   health_check_type = "EC2"
 
-  health_check_grace_period = 150
+  health_check_grace_period = 20
   wait_for_capacity_timeout = 0
   termination_policies      = ["OldestInstance"]
 

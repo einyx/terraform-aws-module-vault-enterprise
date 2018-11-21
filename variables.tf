@@ -30,7 +30,7 @@ variable "vault_dns_address" {
   description = "The DNS address that vault will be accessible at"
 }
 
-variable "vault_dnz_zone" {
+variable "vault_dns_zone_id" {
   type        = "string"
   description = "The DNS zone that we need to manage"
 }
@@ -116,6 +116,7 @@ variable "vault_data_bucket_name" {
 variable "dynamodb_table_name" {
   type        = "string"
   description = "The name of the dynamodb table that vault will create to coordinate HA"
+  default = "vault-ha-coordination"
 }
 
 ############################

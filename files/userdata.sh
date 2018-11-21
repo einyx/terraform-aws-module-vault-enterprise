@@ -34,8 +34,9 @@ cd /tmp
 sudo unzip vault.zip
 sudo mv vault /usr/local/bin
 sudo chmod 0755 /usr/local/bin/vault
-sudo chown root:root /usr/local/bin/vault
+sudo chown vault:vault /usr/local/bin/vault
 sudo setcap cap_ipc_lock=+ep /usr/local/bin/vault
+sudo setcap cap_net_bind_service=+ep /usr/local/bin/vault
 
 # Setup the systemd service
 cat <<EOF >/etc/systemd/system/consul.service
@@ -62,6 +63,52 @@ Restart=on-failure
 StartLimitInterval=60s
 StartLimitBurst=3
 
+[Install]
+WantedBy=multi-user.target
+EOF
+
+cat <<EOF >/etc/systemd/system/vault.service
+
+[Unit]
+User=vault
+Group=vault
+Description=Vault Server
+Requires=basic.target network-online.target
+After=basic.target network-online.target
+
+[Service]
+# No Need for us to mess with /dev
+PrivateDevices=yes
+
+# We get a private tmp directory
+PrivateTmp=yes
+
+# System dirctories mounte in read only
+ProtectSystem=full
+
+# Home mounte in read-only
+ProtectHome=read-only
+
+# Security #####
+# Drops all elevated privileges by default when launching the process
+SecureBits=keep-caps
+
+# Allow the process to disable mlock
+LimitMEMLOCK=infinity
+
+# Turn off acquisition of new privileges system-wide
+
+# To be able to bind port < 1024
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+
+# Start #####
+ExecStart=/usr/local/bin/vault server -config=/etc/vault/
+KillSignal=SIGINT
+TimeoutStopSec=30s
+Restart=on-failure
+StartLimitInterval=60s
+StartLimitBurst=3
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -169,6 +216,7 @@ sed -i -e "s/IP_ADDRESS/$MYIP/g" /etc/vault/config.hcl
 
 # Add My IP Address as cluster_address in Vault Configuration
 sed -i -e "s/IP_ADDRESS/$MYIP/g" /etc/consul/config.hcl
+sed -i -e "s/REGION/${region}/g" /etc/consul/config.hcl
 
 # Extra install steps (if any)
 ${vault_extra_install}
@@ -185,4 +233,11 @@ systemctl enable consul
 systemctl start consul
 
 # License activation
+sleep 600
+
+curl \
+    --request PUT \
+    --data "${vault_license}" \
+    http://127.0.0.1:8200/v1/sys/license
+
 consul license put "${consul_license}"

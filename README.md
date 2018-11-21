@@ -34,6 +34,39 @@ a version number bump.
 
 1. Deploy that AMI across an Auto Scaling Group in a private subnet using the Terraform. 
 
+# Security 
+
+1. Ami compliance
+
+## SSL Certificates
+
+There are 2 types of certificates generated, one is the main responsabile to
+handle the traffic to the ALB, the other sets is for internal cluster
+communication and for CLI tools. We generate them at run time, both leveraging
+ACM and cfssl.
+
+
+## Cgroup isolation
+
+We achieve some isolation using cgroup, leveraging some features of systemd
+
+1. Restict to user
+User=vault
+Group=vault
+
+1. Don't mess with /dev
+PrivateDevices=yes
+
+1. Private tmp
+PrivateTmp=yes
+
+1. Read only file system /usr /var /etc
+ProtectSystem=full
+
+1. Home read only
+ProtectHome=read-only
+
+
 
 ## How do I contribute to this Module?
 
