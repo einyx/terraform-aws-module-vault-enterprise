@@ -11,15 +11,36 @@ variable "region" {
   type        = "string"
   description = "The AWS region to use"
 }
+variable "tags" {
+  type        = "map"
+  description = "A map of tags to apply to all resources"
+}
+
+############################
+## DR ######################
+############################
+variable "dr" {
+  type = "string"
+  description = "Set to true to build a DR cluster"
+  default = "false"
+}
 
 variable "dr_region" {
   type        = "string"
   description = "The AWS Region to use for disaster recovery"
 }
 
-variable "tags" {
-  type        = "map"
-  description = "A map of tags to apply to all resources"
+variable "dr_vpc_id" {
+  type = "string"
+  description = "The ID of the DR VPC"
+}
+
+varible "dr_alb_subnets" {
+
+}
+
+variable "dr_ec2_subnets" {
+  
 }
 
 ############################
