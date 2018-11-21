@@ -170,3 +170,9 @@ variable "vault_license" {
   description = "The license blob for vault"
   default = ""
 }
+
+variable "dr" {
+  type = "string"
+  description = "The license blob for vault"
+  default = ""
+}

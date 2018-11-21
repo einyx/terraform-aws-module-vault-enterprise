@@ -235,9 +235,12 @@ systemctl start consul
 # License activation
 sleep 600
 
+
+consul license put "${consul_license}"
+
+sleep 60
+
 curl \
     --request PUT \
     --data "${vault_license}" \
     http://127.0.0.1:8200/v1/sys/license
-
-consul license put "${consul_license}"
